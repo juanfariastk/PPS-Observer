@@ -1,0 +1,66 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class EnqueteSimples {
+  - String[] opcoes
+  - int[] votos
+  + EnqueteSimples(String[] opcoes)
+  + votar(int opcao)
+  + getOpcoes(): String[]
+  + getVotos(int opcao): int
+  + getTotalVotos(): int
+  + addEnqueteListener(EnqueteListener listener)
+  + notifyEnqueteListeners(EnqueteEvent event)
+}
+
+interface EnqueteListener {
+  + novoVoto(EnqueteEvent event)
+  + novaOpcao(EnqueteEvent event)
+}
+
+class EnqueteEvent {
+  - String opcao
+  - EnqueteSimples enquete
+  + EnqueteEvent(EnqueteSimples enquete, String opcao)
+  + getOpcao(): String
+  + getEnquete(): EnqueteSimples
+}
+
+class TelaVotacao {
+  - JButton[] botoes
+  + TelaVotacao(String[] opcoes, ActionListener controller)
+}
+
+class TelaResultado {
+  - JTextArea textArea
+  + TelaResultado()
+  + novoVoto(EnqueteEvent event)
+  + novaOpcao(EnqueteEvent event)
+}
+
+class TelaResultadoPercentual {
+  - JTextArea textArea
+  + TelaResultadoPercentual()
+  + novoVoto(EnqueteEvent event)
+  + novaOpcao(EnqueteEvent event)
+}
+
+class TelaVotacaoCtrl {
+  - EnqueteSimples enquete
+  + TelaVotacaoCtrl(EnqueteSimples enquete)
+  + actionPerformed(ActionEvent e)
+}
+
+class Main {
+  + main(String[] args)
+}
+
+EnqueteSimples "1" --> "*" EnqueteListener : "observers"
+EnqueteListener <|.. TelaResultado
+EnqueteListener <|.. TelaResultadoPercentual
+EnqueteSimples "1" --> "*" EnqueteEvent : "generates"
+TelaVotacao --> TelaVotacaoCtrl : "uses"
+TelaVotacaoCtrl --> EnqueteSimples : "controls"
+Main --> TelaVotacao : "creates"
+Main --> TelaResultado : "creates"
+Main --> TelaResultadoPercentual : "creates"
